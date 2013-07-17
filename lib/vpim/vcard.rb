@@ -458,7 +458,7 @@ module Vpim
       rescue Vpim::InvalidEncodingError
         # Hack around BDAY dates hat are correct in the month and day, but have
         # some kind of garbage in the year.
-        if field.value =~ /^\s*(\d+)-(\d+)-(\d+)\s*$/
+        if field.value =~ Regexp.new("^\s*(\d+)-(\d+)-(\d+)\s*$")
           y = $1.to_i
           m = $2.to_i
           d = $3.to_i
@@ -671,19 +671,19 @@ module Vpim
       end
 
       case string
-        when /^\xEF\xBB\xBF/
+        when Regexp.new("^\xEF\xBB\xBF")
           string = string.sub("\xEF\xBB\xBF", '')
-        when /^\xFE\xFF/
+        when Regexp.new("^\xFE\xFF")
           arr = string.unpack('n*')
           arr.shift
           string = arr.pack('U*')
-        when /^\xFF\xFE/
+        when Regexp.new("^\xFF\xFE")
           arr = string.unpack('v*')
           arr.shift
           string = arr.pack('U*')
-        when /^\x00B/i
+        when Regexp.new("^\x00B", Regexp::IGNORECASE)
           string = string.unpack('n*').pack('U*')
-        when /^B\x00/i
+        when Regexp.new("^B\x00", Regexp::IGNORECASE)
           string = string.unpack('v*').pack('U*')
       end
 
